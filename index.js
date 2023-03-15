@@ -18,12 +18,12 @@ app.listen(1802, () => {
   console.log("1802 running~");
 });
 
-//取得菜單全部資料
+//取得菜單全部資料 get all data from menu
 app.get("/menu", (req, res) => {
   db.query("SELECT * FROM `Menu`", (err, result) => res.send(result));
 });
 
-//取得購物車總數
+//取得購物車商品總數 get total quantity from cart
 app.post("/totalquantity", (req, res) => {
   const tableNum = req.body.tableNum;
   db.query(
@@ -33,7 +33,7 @@ app.post("/totalquantity", (req, res) => {
   );
 });
 
-//取得已點總數
+//取得已點總數 get total order item quantity
 app.post("/totalorder", (req, res) => {
   const tableNum = req.body.tableNum;
   db.query(
@@ -43,7 +43,7 @@ app.post("/totalorder", (req, res) => {
   );
 });
 
-//加入購物車功能(判斷購物車資料表內容)
+//加入購物車功能(判斷購物車資料表內容) add item to cart
 app.post("/addtocart", (req, res) => {
   const tableNum = req.body.tableNum;
   const itemNum = req.body.itemNum;
@@ -66,7 +66,7 @@ app.post("/addtocart", (req, res) => {
   });
 });
 
-//取得購物車資料
+//取得購物車資料 get what's in the cart
 app.post("/cart", (req, res) => {
   const tableNum = req.body.tableNum;
   const sql =
@@ -74,15 +74,7 @@ app.post("/cart", (req, res) => {
   db.query(sql, [tableNum], (err, result) => res.send(result));
 });
 
-//用菜單資料對應購物車內容 多的 他媽有病？
-// app.post("/mealdata", (req, res) => {
-//   const itemNum = req.body.itemNum;
-//   db.query("SELECT * FROM Menu WHERE itemNum = ?", [itemNum], (err, result) =>
-//     res.send(result)
-//   );
-// });
-
-//修改購物車數量
+//修改購物車數量 adjust item quantity in cart
 app.post("/adjustcart", (req, res) => {
   const itemNum = req.body.itemNum;
   const tableNum = req.body.tableNum;
@@ -97,7 +89,7 @@ app.post("/adjustcart", (req, res) => {
   }
 });
 
-//將購物車加入訂單
+//將購物車加入訂單 add items from cart to order
 app.post("/sendorder", (req, res) => {
   const tableNum = req.body.tableNum;
   const sql1 =
@@ -110,7 +102,7 @@ app.post("/sendorder", (req, res) => {
   db.query(sql3);
 });
 
-//請酒功能加入訂單
+//請酒功能加入訂單 buy other table a drink
 app.post("/buyudrink", (req, res) => {
   const itemNum = req.body.itemNum;
   const orderTable = req.body.orderTable;
@@ -124,7 +116,7 @@ app.post("/buyudrink", (req, res) => {
   db.query(sql2);
 });
 
-//客人取得訂單資料
+//客人取得訂單資料 order information for customer
 app.post("/order", (req, res) => {
   const tableNum = req.body.tableNum;
   const sql =
@@ -134,7 +126,7 @@ app.post("/order", (req, res) => {
   });
 });
 
-//廚房取得訂單數量
+//廚房取得訂單數量 get all order without detail
 app.get("/orderinfo", (req, res) => {
   db.query(
     "SELECT orderListID, deliverTable, createTime FROM OrderInfo WHERE allDone = 0;",
@@ -142,7 +134,7 @@ app.get("/orderinfo", (req, res) => {
   );
 });
 
-//廚房取得有訂單桌號
+//廚房取得有訂單桌號 get table number that have order not yet done
 app.get("/tablenum", (req, res) => {
   db.query(
     "SELECT DISTINCT deliverTable FROM OrderInfo WHERE allDone = 0;",
@@ -150,7 +142,7 @@ app.get("/tablenum", (req, res) => {
   );
 });
 
-//廚房取得訂單細節
+//廚房取得訂單細節 get detail info in the order
 app.post("/orderlist", (req, res) => {
   const deliverTable = req.body.deliverTable;
   const createTime = req.body.createTime;
@@ -159,7 +151,7 @@ app.post("/orderlist", (req, res) => {
   db.query(sql, [deliverTable, createTime], (err, result) => res.send(result));
 });
 
-//修改餐點完成與否
+//修改餐點完成與否 set if item is finish prepare or not
 app.post("/handleitemdone", (req, res) => {
   const itemNum = req.body.itemNum;
   const deliverTable = req.body.deliverTable;
@@ -186,7 +178,7 @@ app.post("/handleitemdone", (req, res) => {
   );
 });
 
-//取得單桌準備中
+//取得單桌準備中 
 app.post("/tableandtime", (req, res) => {
   const deliverTable = req.body.deliverTable;
   const sql =
@@ -194,7 +186,7 @@ app.post("/tableandtime", (req, res) => {
   db.query(sql, [deliverTable], (err, result) => res.send(result));
 });
 
-//取得準備中品項
+//取得準備中品項 get item list not yet done
 app.post("/ongoingitem", (req, res) => {
   const deliverTable = req.body.deliverTable;
   const createTime = req.body.createTime;
@@ -203,7 +195,7 @@ app.post("/ongoingitem", (req, res) => {
   db.query(sql, [deliverTable, createTime], (err, result) => res.send(result));
 });
 
-//取得已出餐待結帳品項
+//取得已出餐待結帳品項 get item list which is done but not yet pay
 app.post("/doneitem", (req, res) => {
   const orderTable = req.body.orderTable;
   const sql =
@@ -211,7 +203,7 @@ app.post("/doneitem", (req, res) => {
   db.query(sql, [orderTable], (err, result) => res.send(result));
 });
 
-//取得總金額
+//取得總金額 get total for checkout
 app.post("/total", (req, res) => {
   const orderTable = req.body.orderTable;
   const sql =
@@ -219,13 +211,13 @@ app.post("/total", (req, res) => {
   db.query(sql, [orderTable], (err, result) => res.send(result));
 });
 
-//入座呼叫與否
+//入座呼叫與否 get all table info
 app.get("/tablestate", (req, res) => {
   const sql = "SELECT * FROM SeatedAndCall;";
   db.query(sql, (err, result) => res.send(result));
 });
 
-//結帳!!!
+//結帳!!! checkout~ clean up everything
 app.post("/checkout", (req, res) => {
   const orderTable = req.body.orderTable;
   const sql =
@@ -233,7 +225,7 @@ app.post("/checkout", (req, res) => {
   db.query(sql, [orderTable, orderTable, orderTable]);
 });
 
-//設定客人入坐
+//設定客人入坐 set table seated
 app.post("/seated", (req, res) => {
   const orderTable = req.body.orderTable;
   const boolean = req.body.boolean;
@@ -241,21 +233,21 @@ app.post("/seated", (req, res) => {
   db.query(sql, [boolean, orderTable]);
 });
 
-//設定客人按服務鈴
+//設定客人按服務鈴  set table called server
 app.post("/callserver", (req, res) => {
   const tableNum = req.body.tableNum;
   const sql = "UPDATE SeatedAndCall SET called = 1 WHERE tableNum = ?;";
   db.query(sql, [tableNum]);
 });
 
-//單桌入座呼叫與否
+//單桌入座呼叫與否 check table status
 app.post("/tablestatus", (req, res) => {
   const tableNum = req.body.tableNum;
   const sql = "SELECT * FROM SeatedAndCall WHERE tableNum = ?;";
   db.query(sql, [tableNum], (err, result) => res.send(result));
 });
 
-//取消服務鈴
+//取消服務鈴 cancel server
 app.post("/cancelcalled", (req, res) => {
   const tableNum = req.body.tableNum;
   const sql = "UPDATE SeatedAndCall SET called = 0 WHERE tableNum = ?;";
